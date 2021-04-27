@@ -34,7 +34,6 @@ class Application:
             frame = cv2.flip(cv2image, 1)
 
             cv2image = self.menu_instance.menu(frame)
-            cv2.circle(cv2image, (100,100), 20, (255, 255, 0), 5)
 
             self.current_image = Image.fromarray(cv2image)  # convert image for PIL
             imgtk = ImageTk.PhotoImage(image=self.current_image)  # convert image for tkinter
