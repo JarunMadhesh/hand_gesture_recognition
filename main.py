@@ -1,7 +1,8 @@
 import time
-from ui import *
 import tkinter
 from PIL import ImageTk, Image
+import cv2
+from menu import Menu
 
 
 class App:
