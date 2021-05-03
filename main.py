@@ -1,7 +1,4 @@
 import time
-
-import cv2
-
 from ui import *
 import tkinter
 from PIL import ImageTk, Image
@@ -39,14 +36,14 @@ class App:
             if not ret:
                 return
             frame = cv2.flip(frame, 1)
-            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
             self.frame = self.menu.menu(frame)
 
-            cv2.putText(self.frame, f"fps: {round(1 / (time.time() - self.start))}", (50, 50), cv2.FONT_HERSHEY_PLAIN, 1.5,
-                        (255, 0, 0), 2)
+            cv2.putText(self.frame, f"fps: {round(1 / (time.time() - self.start))}", (50, 50), cv2.FONT_HERSHEY_PLAIN,
+                        1.5, (255, 0, 0), 1)
             self.start = time.time()
 
+            self.frame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
             self.frame = ImageTk.PhotoImage(image=Image.fromarray(self.frame))
             self.canvas.create_image(0, 0, image=self.frame, anchor=tkinter.NW)
 
@@ -84,5 +81,3 @@ class App:
 if __name__ == "__main__":
     app = App()
     app.window.mainloop()
-    # app.camera()
-    # ui()

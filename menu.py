@@ -34,8 +34,8 @@ class Menu:
         fingers = self.count(pts_list)
         count = fingers.count(1)
 
-        cv2.putText(frame, f"number: {count}", (np.shape(frame)[1] - 200, 50), cv2.FONT_HERSHEY_PLAIN, 1.5,
-                    (255, 0, 0), 2)
+        cv2.putText(frame, f"number: {count}", (np.shape(frame)[1] - 250, 50), cv2.FONT_HERSHEY_PLAIN, 2,
+                    (255, 0, 0), 1)
 
         if (not self.started) and count == 2 and fingers[0] == 1 and fingers[-1] == 1:
             self.started = True
@@ -69,21 +69,21 @@ class Menu:
                     current_point = (pts_list[9][1], pts_list[9][2])
                     self.point = current_point
                     cv2.circle(frame, current_point, 5, (255, 255, 0), 10)
-                    cv2.putText(frame, f"1: Channel", (np.shape(frame)[1] - 200, np.shape(frame)[0] - 200),
-                                cv2.FONT_HERSHEY_PLAIN, 1.5,
+                    cv2.putText(frame, f"1: Channel", (np.shape(frame)[1] - 250, np.shape(frame)[0] - 200),
+                                cv2.FONT_HERSHEY_PLAIN, 2,
                                 (255, 0, 0), 2)
-                    cv2.putText(frame, f"2: Volume", (np.shape(frame)[1] - 200, np.shape(frame)[0] - 150),
-                                cv2.FONT_HERSHEY_PLAIN, 1.5,
+                    cv2.putText(frame, f"2: Volume", (np.shape(frame)[1] - 250, np.shape(frame)[0] - 170),
+                                cv2.FONT_HERSHEY_PLAIN, 2,
                                 (255, 0, 0), 2)
 
                 # Channel
                 elif count == 1 and fingers[1] == 1:
                     current_point = (pts_list[9][1], pts_list[9][2])
                     self.channel = self.calculate(self.channel, current_point[0] - self.point[0])
-                    cv2.putText(frame, f"Channel: {int(self.channel)}", (np.shape(frame)[1] - 200,
+                    cv2.putText(frame, f"Channel: {int(self.channel)}", (np.shape(frame)[1] - 250,
                                                                          np.shape(frame)[0] - 200),
-                                cv2.FONT_HERSHEY_PLAIN, 1.5,
-                                (255, 0, 0), 3)
+                                cv2.FONT_HERSHEY_PLAIN, 2,
+                                (255, 0, 0), 2)
                     cv2.circle(frame, current_point, 5, (255, 0, 0), 10)
                     cv2.circle(frame, self.point, 5, (255, 255, 0), 10)
                     self.prevent_repetition = False
@@ -92,10 +92,10 @@ class Menu:
                 elif count == 2 and fingers[1] == 1 and fingers[2] == 1:
                     current_point = (pts_list[9][1], pts_list[9][2])
                     self.volume = self.calculate(self.volume, current_point[0] - self.point[0])
-                    cv2.putText(frame, f"Volume {int(self.volume)}", (np.shape(frame)[1] - 200,
+                    cv2.putText(frame, f"Volume {int(self.volume)}", (np.shape(frame)[1] - 250,
                                                                       np.shape(frame)[0] - 200),
-                                cv2.FONT_HERSHEY_PLAIN, 1.5,
-                                (255, 0, 0), 3)
+                                cv2.FONT_HERSHEY_PLAIN, 2,
+                                (255, 0, 0), 2)
                     cv2.circle(frame, current_point, 5, (255, 0, 0), 10)
                     cv2.circle(frame, self.point, 5, (255, 255, 0), 10)
                     self.prevent_repetition = False

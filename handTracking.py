@@ -6,8 +6,8 @@ class HandDetection:
     def __init__(self):
         self.mode = False
         self.maxHands = 1
-        self.detectionConfidence = 0.85
-        self.trackConfidence = 0.85
+        self.detectionConfidence = 0.8
+        self.trackConfidence = 0.8
 
         self.mp_drawing = mp.solutions.drawing_utils
         self.mp_holistic = mp.solutions.holistic
@@ -15,7 +15,7 @@ class HandDetection:
 
         self.holistic = self.mp_holistic.Holistic(min_detection_confidence=self.detectionConfidence,
                                                   min_tracking_confidence=self.trackConfidence)
-        self.hands = self.mp_hand.Hands(max_num_hands=1, min_tracking_confidence=self.detectionConfidence,
+        self.hands = self.mp_hand.Hands(max_num_hands=self.maxHands, min_tracking_confidence=self.detectionConfidence,
                                         min_detection_confidence=self.trackConfidence)
         self.results = None
 
@@ -38,6 +38,7 @@ class HandDetection:
                                                                            thickness=2, circle_radius=4),
                                                self.mp_drawing.DrawingSpec(color=(0, 255, 255),
                                                                            thickness=2, circle_radius=2))
+
         return frame
 
     def positions(self, img, hand_no=0):
