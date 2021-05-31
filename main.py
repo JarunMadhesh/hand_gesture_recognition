@@ -8,6 +8,7 @@ from menu import Menu
 class App:
     def __init__(self):
         self.source = 0
+        self.source2 = "http://192.168.1.6:4747/video"
         self.cam = cv2.VideoCapture(self.source)
         self.frame = None
         self.cam.set(3, 1270)
@@ -55,28 +56,6 @@ class App:
         self.window.destroy()
         self.cam.release()  # release web camera
         cv2.destroyAllWindows()  # it is not mandatory in this application
-
-    def camera(self):
-
-        while self.cam.isOpened():
-            ret, frame = self.cam.read()
-            if not ret:
-                break
-
-            frame = cv2.flip(frame, 1)
-
-            frame = self.menu.menu(frame)
-
-            cv2.putText(frame, f"fps: {round(1 / (time.time() - self.start))}", (50, 50), cv2.FONT_HERSHEY_PLAIN, 1.5,
-                        (255, 0, 0), 2)
-            self.start = time.time()
-            cv2.imshow("Video", frame)
-
-            if cv2.waitKey(1) & 0xff == ord('q'):
-                break
-
-        self.cam.release()
-        cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":

@@ -2,6 +2,8 @@ from handTracking import HandDetection
 import cv2
 import numpy as np
 import winsound
+from firebase import firebase
+import mysqlDb
 
 
 class Menu:
@@ -15,6 +17,18 @@ class Menu:
 
         self.volume = 0
         self.channel = 0
+
+        self.firebase = firebase.FirebaseApplication(
+            "https://hand-gesture-recognition-cfec6-default-rtdb.asia-southeast1.firebasedatabase.app/", None)
+
+        self.db = MySQLdb.connect(
+            host="localhost",
+            user="root",
+            passwd="root@123",
+            db="trial"
+        )
+
+        self.curr = db.cursor()
 
     @staticmethod
     def calculate(num, dx):
@@ -60,6 +74,7 @@ class Menu:
             # Menu opens
             elif self.menu_opened:
 
+
                 # return if 0, 3, 4
                 if count == 0 or count == 3 or count == 4:
                     return frame
@@ -79,11 +94,24 @@ class Menu:
                 # Channel
                 elif count == 1 and fingers[1] == 1:
                     current_point = (pts_list[9][1], pts_list[9][2])
-                    self.channel = self.calculate(self.channel, current_point[0] - self.point[0])
-                    cv2.putText(frame, f"Channel: {int(self.channel)}", (np.shape(frame)[1] - 250,
-                                                                         np.shape(frame)[0] - 200),
-                                cv2.FONT_HERSHEY_PLAIN, 2,
-                                (255, 0, 0), 2)
+                    channel = self.calculate(self.channel, current_point[0] - self.point[0])
+                    if channel > self.channel:
+                        # Sending to DB
+                        self.curr.execute("INSERT INTO movement (direction, time) VALUES ('channel_up', NOW())")
+                        self.db.commit()
+                        cv2.putText(frame, f"Channel up", (np.shape(frame)[1] - 250,
+                                                          np.shape(frame)[0] - 200),
+                                    cv2.FONT_HERSHEY_PLAIN, 2,
+                                    (255, 0, 0), 2)
+                    else:
+                        # Sending to DB
+                        self.curr.execute("INSERT INTO movement (direction, time) VALUES ('channel_down', NOW())")
+                        self.db.commit()
+                        cv2.putText(frame, f"Channel Down", (np.shape(frame)[1] - 250,
+                                                            np.shape(frame)[0] - 200),
+                                    cv2.FONT_HERSHEY_PLAIN, 2,
+                                    (255, 0, 0), 2)
+                    self.channel = channel
                     cv2.circle(frame, current_point, 5, (255, 0, 0), 10)
                     cv2.circle(frame, self.point, 5, (255, 255, 0), 10)
                     self.prevent_repetition = False
@@ -91,11 +119,23 @@ class Menu:
                 # Volume
                 elif count == 2 and fingers[1] == 1 and fingers[2] == 1:
                     current_point = (pts_list[9][1], pts_list[9][2])
-                    self.volume = self.calculate(self.volume, current_point[0] - self.point[0])
-                    cv2.putText(frame, f"Volume {int(self.volume)}", (np.shape(frame)[1] - 250,
-                                                                      np.shape(frame)[0] - 200),
-                                cv2.FONT_HERSHEY_PLAIN, 2,
-                                (255, 0, 0), 2)
+                    volume = self.calculate(self.volume, current_point[0] - self.point[0])
+                    if volume > self.volume:
+                        self.curr.execute("INSERT INTO movement (direction, time) VALUES ('vol_up', NOW())")
+                        self.db.commit()
+                        cv2.putText(frame, f"Volume up", (np.shape(frame)[1] - 250,
+                                                                          np.shape(frame)[0] - 200),
+                                    cv2.FONT_HERSHEY_PLAIN, 2,
+                                    (255, 0, 0), 2)
+                    else:
+                        self.curr.execute("INSERT INTO movement (direction, time) VALUES ('vol_down', NOW())")
+                        self.db.commit()
+                        cv2.putText(frame, f"Volume Down", (np.shape(frame)[1] - 250,
+                                                                          np.shape(frame)[0] - 200),
+                                    cv2.FONT_HERSHEY_PLAIN, 2,
+                                    (255, 0, 0), 2)
+                    self.volume = volume
+
                     cv2.circle(frame, current_point, 5, (255, 0, 0), 10)
                     cv2.circle(frame, self.point, 5, (255, 255, 0), 10)
                     self.prevent_repetition = False
@@ -105,6 +145,7 @@ class Menu:
                     self.point = None
                     self.menu_opened = False
                     self.started = False
+
                     winsound.Beep(1250, 300)
 
         return frame
