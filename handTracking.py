@@ -5,7 +5,7 @@ import cv2
 class HandDetection:
     def __init__(self):
         self.mode = False
-        self.maxHands = 1
+        self.maxHands = 2
         self.detectionConfidence = 0.8
         self.trackConfidence = 0.8
 
@@ -13,8 +13,6 @@ class HandDetection:
         self.mp_holistic = mp.solutions.holistic
         self.mp_hand = mp.solutions.hands
 
-        self.holistic = self.mp_holistic.Holistic(min_detection_confidence=self.detectionConfidence,
-                                                  min_tracking_confidence=self.trackConfidence)
         self.hands = self.mp_hand.Hands(max_num_hands=self.maxHands, min_tracking_confidence=self.detectionConfidence,
                                         min_detection_confidence=self.trackConfidence)
         self.results = None

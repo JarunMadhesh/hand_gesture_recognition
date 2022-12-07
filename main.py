@@ -1,8 +1,9 @@
 import time
 import tkinter
-from PIL import ImageTk, Image
 import cv2
+from PIL import ImageTk, Image
 from menu import Menu
+from personTracking import PersonTracking
 
 
 class App:
@@ -15,6 +16,7 @@ class App:
         self.cam.set(4, 720)
 
         self.menu = Menu()
+        self.personTracking = PersonTracking()
         self.start = time.time()
 
         # Creating Tkinter window
@@ -39,7 +41,9 @@ class App:
                 return
             frame = cv2.flip(frame, 1)
 
-            self.frame = self.menu.menu(frame)
+            # self.frame = self.menu.menu(frame)
+
+            self.frame = self.personTracking.detect(frame)
 
             cv2.putText(self.frame, f"fps: {round(1 / (time.time() - self.start))}", (50, 50), cv2.FONT_HERSHEY_PLAIN,
                         1.5, (255, 0, 0), 1)

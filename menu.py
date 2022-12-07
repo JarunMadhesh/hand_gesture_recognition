@@ -2,9 +2,6 @@ from handTracking import HandDetection
 import cv2
 import numpy as np
 import winsound
-from firebase import firebase
-import mysqlDb
-
 
 class Menu:
     def __init__(self):
@@ -18,17 +15,6 @@ class Menu:
         self.volume = 0
         self.channel = 0
 
-        self.firebase = firebase.FirebaseApplication(
-            "https://hand-gesture-recognition-cfec6-default-rtdb.asia-southeast1.firebasedatabase.app/", None)
-
-        self.db = MySQLdb.connect(
-            host="localhost",
-            user="root",
-            passwd="root@123",
-            db="trial"
-        )
-
-        self.curr = db.cursor()
 
     @staticmethod
     def calculate(num, dx):
@@ -97,16 +83,16 @@ class Menu:
                     channel = self.calculate(self.channel, current_point[0] - self.point[0])
                     if channel > self.channel:
                         # Sending to DB
-                        self.curr.execute("INSERT INTO movement (direction, time) VALUES ('channel_up', NOW())")
-                        self.db.commit()
+                        # self.curr.execute("INSERT INTO movement (direction, time) VALUES ('channel_up', NOW())")
+                        # self.db.commit()
                         cv2.putText(frame, f"Channel up", (np.shape(frame)[1] - 250,
                                                           np.shape(frame)[0] - 200),
                                     cv2.FONT_HERSHEY_PLAIN, 2,
                                     (255, 0, 0), 2)
                     else:
                         # Sending to DB
-                        self.curr.execute("INSERT INTO movement (direction, time) VALUES ('channel_down', NOW())")
-                        self.db.commit()
+                        # self.curr.execute("INSERT INTO movement (direction, time) VALUES ('channel_down', NOW())")
+                        # self.db.commit()
                         cv2.putText(frame, f"Channel Down", (np.shape(frame)[1] - 250,
                                                             np.shape(frame)[0] - 200),
                                     cv2.FONT_HERSHEY_PLAIN, 2,
@@ -121,15 +107,15 @@ class Menu:
                     current_point = (pts_list[9][1], pts_list[9][2])
                     volume = self.calculate(self.volume, current_point[0] - self.point[0])
                     if volume > self.volume:
-                        self.curr.execute("INSERT INTO movement (direction, time) VALUES ('vol_up', NOW())")
-                        self.db.commit()
+                        # self.curr.execute("INSERT INTO movement (direction, time) VALUES ('vol_up', NOW())")
+                        # self.db.commit()
                         cv2.putText(frame, f"Volume up", (np.shape(frame)[1] - 250,
                                                                           np.shape(frame)[0] - 200),
                                     cv2.FONT_HERSHEY_PLAIN, 2,
                                     (255, 0, 0), 2)
                     else:
-                        self.curr.execute("INSERT INTO movement (direction, time) VALUES ('vol_down', NOW())")
-                        self.db.commit()
+                        # self.curr.execute("INSERT INTO movement (direction, time) VALUES ('vol_down', NOW())")
+                        # self.db.commit()
                         cv2.putText(frame, f"Volume Down", (np.shape(frame)[1] - 250,
                                                                           np.shape(frame)[0] - 200),
                                     cv2.FONT_HERSHEY_PLAIN, 2,
