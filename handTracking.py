@@ -24,6 +24,7 @@ class HandDetection:
         self.results = self.hands.process(frame)
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
+
         if self.results.multi_hand_landmarks:
             # print(results.multi_hand_landmarks)
             # Left Hand

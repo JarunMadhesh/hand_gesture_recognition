@@ -1,5 +1,7 @@
 import mediapipe as mp
 import cv2
+import face_recognition
+from faceRecognition import FaceRecognition
 
 
 class PersonTracking:
@@ -16,6 +18,9 @@ class PersonTracking:
         self.enableSegmentation = True
         self.refineFaceLandmarks = False
 
+        self.faceRecognition = FaceRecognition()
+        self.isRecognized = False
+
         self.holistics = self.mp_holistics.Holistic(refine_face_landmarks=self.refineFaceLandmarks,
                                                     enable_segmentation= self.enableSegmentation,
                                                     min_detection_confidence=0.8,
@@ -27,14 +32,26 @@ class PersonTracking:
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
         results = self.holistics.process(frame)
-        face_results = self.faceDetection.process(frame)
+        # face_results = self.faceDetection.process(frame)
+
+        # print(results.pose_landmarks.landmark[8], results.pose_landmarks.landmark[7])
 
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
-        if face_results.detections:
-            for detection in face_results.detections:
-                self.mp_drawing.draw_detection(frame, detection)
-                print(detection)
+        if results.pose_landmarks and not self.isRecognized:
+            height, width, channels = frame.shape
+
+            face_width = round(width * results.pose_landmarks.landmark[7].x-width * results.pose_landmarks.landmark[8].x)
+            face_center = round(height * results.pose_landmarks.landmark[0].y)
+
+            face_position = (face_center - face_width,
+                             round(width * results.pose_landmarks.landmark[7].x),
+                             face_center + face_width,
+                             round(width * results.pose_landmarks.landmark[8].x))
+
+            self.isRecognized = self.faceRecognition.recognize(frame, [face_position])
+        elif not results.pose_landmarks and self.isRecognized:
+            self.isRecognized = False
 
         self.mp_drawing.draw_landmarks(
             frame,
