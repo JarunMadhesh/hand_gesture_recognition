@@ -13,8 +13,8 @@ class App:
         # self.source2 = "http://192.168.1.6:4747/video"
         self.cam = cv2.VideoCapture(self.source)
         self.frame = None
-        self.cam.set(3, 1270)
-        self.cam.set(4, 720)
+        self.cam.set(3, 640)
+        self.cam.set(4, 480)
 
         # self.menu = Menu()
         self.personTracking = PersonTracking()
@@ -27,7 +27,7 @@ class App:
         self.window.protocol('WM_DELETE_WINDOW', self.destructor)
 
         # Create a canvas that can fit the above video source size
-        self.canvas = tkinter.Canvas(self.window, width=1270, height=720)
+        self.canvas = tkinter.Canvas(self.window, width=640, height=480)
         self.canvas.pack()
 
         # After it is called once, the update method will be automatically called every delay milliseconds

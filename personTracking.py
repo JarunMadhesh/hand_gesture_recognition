@@ -2,6 +2,7 @@ import mediapipe as mp
 import cv2
 import face_recognition
 from faceRecognition import FaceRecognition
+from controller import LeftHand, RightHand
 
 
 class PersonTracking:
@@ -21,10 +22,14 @@ class PersonTracking:
         self.faceRecognition = FaceRecognition()
         self.isRecognized = False
 
+        self.lcontroller = LeftHand()
+        self.rcontroller = RightHand()
+
         self.holistics = self.mp_holistics.Holistic(refine_face_landmarks=self.refineFaceLandmarks,
                                                     enable_segmentation= self.enableSegmentation,
                                                     min_detection_confidence=0.8,
-                                                    min_tracking_confidence=0.8)
+                                                    min_tracking_confidence=0.8,
+                                                    smooth_segmentation=True)
 
         self.faceDetection = self.mp_faceDetection.FaceDetection(model_selection=1, min_detection_confidence=0.8)
 
@@ -39,6 +44,7 @@ class PersonTracking:
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
         if results.pose_landmarks and not self.isRecognized:
+            print(self.isRecognized)
             height, width, channels = frame.shape
 
             face_width = round(width * results.pose_landmarks.landmark[7].x-width * results.pose_landmarks.landmark[8].x)
@@ -52,6 +58,18 @@ class PersonTracking:
             self.isRecognized = self.faceRecognition.recognize(frame, [face_position])
         elif not results.pose_landmarks and self.isRecognized:
             self.isRecognized = False
+
+        print(self.isRecognized)
+
+        if results.right_hand_landmarks:
+            pt_list = self.lcontroller.positions(frame.shape, results.right_hand_landmarks)
+            fingers = self.lcontroller.count(pt_list)
+            print("LEFT: ", fingers)
+
+        if results.left_hand_landmarks:
+            pt_list = self.lcontroller.positions(frame.shape, results.left_hand_landmarks)
+            fingers = self.lcontroller.count(pt_list)
+            print("RIGHT: ", fingers)
 
         self.mp_drawing.draw_landmarks(
             frame,
